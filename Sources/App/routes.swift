@@ -14,4 +14,7 @@ public func routes(_ router: Router) throws {
     router.get("404") { request in
         return try request.view().render("404")
     }
+    router.get("welcome") { request in
+        return try request.view().render("welcome")
+    }
 }
