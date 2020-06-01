@@ -5,10 +5,10 @@ import sys
 
 app = Flask(__name__)
 
-with open(sys.path[0]+"/secrets", "r") as f:
+'''with open(sys.path[0]+"/secrets", "r") as f:
     for i, line in enumerate(f):
         if i == 2:
-            passwd = line[:-1]
+            passwd = line[:-1]'''
 
 # main smpark.in stuff
 @app.route('/', methods=["GET"])
@@ -27,7 +27,7 @@ def privacy():
 def fourohfour(e):
     return render_template('404.html')
 
-# ndsspotify stuff
+'''# ndsspotify stuff
 @app.route('/play', methods=["POST"])
 def flaskPlay():
     print(request.headers)
@@ -99,7 +99,7 @@ def flaskVolu():
         spotVL(request.headers['Volume'])
         return Response('{"status":"Success"}', status=200, mimetype='application/json')
     else:
-        return Response('{"status":"Incorrect password"}', status=401, mimetype='application/json')
+        return Response('{"status":"Incorrect password"}', status=401, mimetype='application/json')'''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
