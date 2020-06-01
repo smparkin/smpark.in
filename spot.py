@@ -2,9 +2,6 @@ import argparse
 import requests
 import json as jsn
 import urllib.request
-import numpy as np
-import imgcat
-from PIL import Image
 import sys
 import time
 import traceback
