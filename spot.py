@@ -139,10 +139,6 @@ def spotNP(imgcatBool, timeBool):
     print("\033[95m\033[1m"+title+"\033[0m by ", end='')
     print("\033[94m\033[1m"+artist+"\033[0m is "+text+" on ", end='')
     print("\033[92m\033[1m"+devicename+"\033[0m")
-    if (imgcatBool):
-        im = np.asarray(Image.open(urllib.request.urlopen(imgurl)))
-        time.sleep(1)
-        imgcat.imgcat(im)
     if (timeBool):
         print(str(round(currentSec//60))+":"+(str(round(currentSec%60))).zfill(2)+"/"+str(round(durationSec//60))+":"+(str(round(durationSec%60)).zfill(2)))
     return r.status_code
