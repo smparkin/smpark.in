@@ -11,8 +11,7 @@
 .yolo{
    float: left;
    display: block;
-   transition: all .1s ease-in;
-   transition: all 1s ease-out;
+   transition: all .01s ease-in;
    height: 30px;
    width: 30px;
 }
