@@ -10,9 +10,6 @@ public func configure(_ app: Application) throws {
     app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     app.middleware.use(ErrorMiddleware.default(environment: app.environment))
     
-    //port
-    app.http.server.configuration.port = 8080
-    
     //routes
     try routes(app)
 }
