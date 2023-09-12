@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "smparkin",
     platforms: [
-       .macOS(.v12)
+        .macOS(.v13),
+        .iOS(.v16)
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
