@@ -38,7 +38,7 @@ class Server: ObservableObject {
     }
     
     func start() {
-        Task(priority: .background) {
+        Task(priority: .userInitiated) {
             do {
                 try app.start()
             } catch {
