@@ -15,37 +15,32 @@
                 background-color: #1e1e1e;
                 padding: 20px;
                 text-align: center;
-                border-bottom: 2px solid #9370db;
+                border-bottom: 2px solid #9370db !important;
             }
             header h1 {
                 margin: 0;
-                color: #9370db;
+                color: #9370db !important;
             }
             header img {
                 max-width: 150px;
                 height: auto;
                 border-radius: 50%;
-                border: 2px solid #9370db;
+                border: 2px solid #9370db !important;
                 margin: 10px 0;
             }
-            nav {
-                display: flex;
-                justify-content: center;
-                flex-wrap: wrap;
-                margin: 20px 0;
-            }
-            nav a {
-                color: #9370db;
+            a:link,
+            a:visited {
+                color: #9370db !important;
                 text-decoration: none;
-                margin: 5px 15px;
-                padding: 10px 20px;
-                border: 1px solid #9370db;
-                border-radius: 5px;
                 transition: background-color 0.3s, color 0.3s;
             }
-            nav a:hover {
-                background-color: #9370db;
-                color: #ffffff;
+            a:hover {
+                background-color: #9370db !important;
+                color: #ffffff !important;
+            }
+            a:active {
+                background-color: #9370db !important;
+                color: #ffffff !important;
             }
             section {
                 max-width: 800px;
@@ -61,13 +56,13 @@
                 display: block;
                 margin: 0 auto 20px auto;
                 border-radius: 10px;
-                border: 2px solid #9370db;
+                border: 2px solid #9370db !important;
             }
             footer {
                 text-align: center;
                 padding: 20px;
                 background-color: #1e1e1e;
-                border-top: 2px solid #9370db;
+                border-top: 2px solid #9370db !important;
             }
         </style>
     </head>
@@ -80,10 +75,6 @@
             <h1>Stephen Parkinson</h1>
             <p>Systems Development Engineer</p>
         </header>
-        <nav>
-            <a href="#about">About Me</a>
-            <a href="#contact">Contact</a>
-        </nav>
         <section id="about">
             <h2>About Me</h2>
             <p>I'm doing a lot of stuff with computers right now.</p>
