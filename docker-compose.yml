@@ -19,7 +19,7 @@ x-shared_environment: &shared_environment
   
 services:
   app:
-    image: smparkin:latest
+    image: sparkii/smparkin:latest
     build:
       context: .
     environment:
