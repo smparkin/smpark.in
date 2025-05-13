@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.1.0
 import PackageDescription
 
 let package = Package(
@@ -7,8 +7,8 @@ let package = Package(
         .macOS(.v13)
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.92.1")),
-        .package(url: "https://github.com/vapor/leaf.git", .upToNextMajor(from: "4.3.0")),
+        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.114.0")),
+        .package(url: "https://github.com/vapor/leaf.git", .upToNextMajor(from: "4.5.0")),
     ],
     targets: [
         .target(
@@ -36,4 +36,3 @@ let package = Package(
         )
     ]
 )
-
