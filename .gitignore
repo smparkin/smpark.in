@@ -1,2 +1,10 @@
 .vscode
-.build
+.DS_Store
+
+# Frontend
+Frontend/node_modules
+Frontend/dist
+
+# Backend
+Backend/server
+Backend/public/app/
