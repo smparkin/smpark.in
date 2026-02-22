@@ -33,6 +33,7 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: registry.smpark.in/smparkin/website:latest
           cache-from: type=registry,ref=registry.smpark.in/smparkin/website:buildcache
           cache-to: type=registry,ref=registry.smpark.in/smparkin/website:buildcache,mode=max
