@@ -40,4 +40,4 @@ jobs:
 
       - name: Summary
         run: |
-          echo "Built and pushed registry.smpark.in/smparkin/website:latest"
+          echo "Built and pushed website:latest"
