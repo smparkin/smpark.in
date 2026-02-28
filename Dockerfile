@@ -12,7 +12,7 @@ RUN npm run build -- --outDir dist --emptyOutDir
 # ================================
 # Backend build
 # ================================
-FROM golang:1.23-alpine AS backend
+FROM golang:1.26-alpine AS backend
 
 WORKDIR /build
 COPY Backend/ ./
