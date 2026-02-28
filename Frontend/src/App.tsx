@@ -5,6 +5,8 @@ import "@cloudscape-design/global-styles/index.css";
 import "./App.css";
 import Home from "./pages/Home";
 import Resume from "./pages/Resume";
+import Paste from "./pages/Paste";
+import PasteView from "./pages/PasteView";
 import NotFound from "./pages/NotFound";
 
 function AppContent() {
@@ -32,6 +34,8 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/resume" element={<Resume />} />
+          <Route path="/paste" element={<Paste />} />
+          <Route path="/paste/:id" element={<PasteView />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       }

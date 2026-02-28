@@ -1,4 +1,4 @@
-.PHONY: all frontend backend run dev clean
+.PHONY: all frontend backend run dev clean upgrade
 
 all: frontend backend
 
@@ -16,3 +16,7 @@ dev:
 
 clean:
 	rm -rf Backend/server Backend/public/app
+
+upgrade:
+	cd Frontend && npm upgrade
+	cd Backend && go get -u ./... && go mod tidy

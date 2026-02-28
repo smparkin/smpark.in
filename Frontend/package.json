@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudscape-design/code-view": "^3.0.102",
     "@cloudscape-design/components": "^3.0.1200",
     "@cloudscape-design/global-styles": "^1.0.50",
     "react": "^19.2.0",

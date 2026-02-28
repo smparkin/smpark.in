@@ -15,8 +15,7 @@ RUN npm run build -- --outDir dist --emptyOutDir
 FROM golang:1.23-alpine AS backend
 
 WORKDIR /build
-COPY Backend/go.mod ./
-COPY Backend/main.go ./
+COPY Backend/ ./
 RUN CGO_ENABLED=0 go build -o server .
 
 # ================================
