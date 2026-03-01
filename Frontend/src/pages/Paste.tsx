@@ -69,7 +69,7 @@ export default function Paste() {
         setError(data.error ?? "Failed to create paste.");
         return;
       }
-      navigate(`/paste/${data.id}`);
+      navigate(`/paste/${data.id}`, { state: { password: password || undefined } });
     } catch {
       setError("Network error. Please try again.");
     } finally {

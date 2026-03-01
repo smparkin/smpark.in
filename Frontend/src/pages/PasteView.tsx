@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useLocation } from "react-router-dom";
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import Header from "@cloudscape-design/components/header";
 import Container from "@cloudscape-design/components/container";
@@ -29,12 +29,16 @@ function formatDate(iso: string) {
 
 export default function PasteView() {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const [paste, setPaste] = useState<Paste | null>(null);
   const [status, setStatus] = useState<
     "loading" | "ok" | "notfound" | "expired" | "error" | "locked"
   >("loading");
   const [copied, setCopied] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [passwordInput, setPasswordInput] = useState(
+    (location.state as { password?: string })?.password ?? "",
+  );
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [unlocking, setUnlocking] = useState(false);
 
@@ -101,6 +105,13 @@ export default function PasteView() {
     } finally {
       setUnlocking(false);
     }
+  }
+
+  function handleCopyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
   }
 
   function handleCopy() {
@@ -194,6 +205,9 @@ export default function PasteView() {
           variant="h1"
           actions={
             <SpaceBetween direction="horizontal" size="xs">
+              <Button onClick={handleCopyLink} iconName={linkCopied ? "status-positive" : "share"}>
+                {linkCopied ? "Copied!" : "Copy Link"}
+              </Button>
               <Button onClick={handleCopy} iconName={copied ? "status-positive" : "copy"}>
                 {copied ? "Copied!" : "Copy"}
               </Button>
