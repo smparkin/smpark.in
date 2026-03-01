@@ -36,15 +36,17 @@ export default function PasteView() {
   >("loading");
   const [copied, setCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
-  const [passwordInput, setPasswordInput] = useState(
-    (location.state as { password?: string })?.password ?? "",
-  );
+  const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [unlocking, setUnlocking] = useState(false);
 
+  const initialPassword = (location.state as { password?: string })?.password;
+
   useEffect(() => {
     if (!id) return;
-    fetch(`/api/paste/${id}`)
+    const headers: HeadersInit = {};
+    if (initialPassword) headers["X-Paste-Password"] = initialPassword;
+    fetch(`/api/paste/${id}`, { headers })
       .then((res) => {
         if (res.status === 404) {
           setStatus("notfound");
