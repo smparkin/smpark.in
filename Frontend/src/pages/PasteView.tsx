@@ -211,7 +211,7 @@ export default function PasteView() {
                 {linkCopied ? "Copied!" : "Copy Link"}
               </Button>
               <Button onClick={handleCopy} iconName={copied ? "status-positive" : "copy"}>
-                {copied ? "Copied!" : "Copy"}
+                {copied ? "Copied!" : "Copy Text"}
               </Button>
               {!paste.protected && (
                 <Button href={`/api/paste/${id}/raw`} target="_blank" iconName="external">
