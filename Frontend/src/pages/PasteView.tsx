@@ -9,6 +9,8 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import Alert from "@cloudscape-design/components/alert";
 import ColumnLayout from "@cloudscape-design/components/column-layout";
+import FormField from "@cloudscape-design/components/form-field";
+import Input from "@cloudscape-design/components/input";
 import { CodeView } from "@cloudscape-design/code-view";
 
 interface Paste {
@@ -18,6 +20,7 @@ interface Paste {
   language: string;
   created_at: string;
   expires_at: string | null;
+  protected: boolean;
 }
 
 function formatDate(iso: string) {
@@ -27,10 +30,13 @@ function formatDate(iso: string) {
 export default function PasteView() {
   const { id } = useParams<{ id: string }>();
   const [paste, setPaste] = useState<Paste | null>(null);
-  const [status, setStatus] = useState<"loading" | "ok" | "notfound" | "expired" | "error">(
-    "loading",
-  );
+  const [status, setStatus] = useState<
+    "loading" | "ok" | "notfound" | "expired" | "error" | "locked"
+  >("loading");
   const [copied, setCopied] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [unlocking, setUnlocking] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -42,6 +48,10 @@ export default function PasteView() {
         }
         if (res.status === 410) {
           setStatus("expired");
+          return null;
+        }
+        if (res.status === 403) {
+          setStatus("locked");
           return null;
         }
         if (!res.ok) {
@@ -58,6 +68,40 @@ export default function PasteView() {
       })
       .catch(() => setStatus("error"));
   }, [id]);
+
+  async function handleUnlock() {
+    if (!id || !passwordInput) return;
+    setUnlocking(true);
+    setPasswordError(null);
+    try {
+      const res = await fetch(`/api/paste/${id}`, {
+        headers: { "X-Paste-Password": passwordInput },
+      });
+      if (res.status === 403) {
+        setPasswordError("Incorrect password.");
+        return;
+      }
+      if (res.status === 404) {
+        setStatus("notfound");
+        return;
+      }
+      if (res.status === 410) {
+        setStatus("expired");
+        return;
+      }
+      if (!res.ok) {
+        setStatus("error");
+        return;
+      }
+      const data = await res.json();
+      setPaste(data);
+      setStatus("ok");
+    } catch {
+      setPasswordError("Network error. Please try again.");
+    } finally {
+      setUnlocking(false);
+    }
+  }
 
   function handleCopy() {
     if (!paste) return;
@@ -103,6 +147,36 @@ export default function PasteView() {
     );
   }
 
+  if (status === "locked") {
+    return (
+      <ContentLayout header={<Header variant="h1">Password Required</Header>}>
+        <Container>
+          <SpaceBetween size="m">
+            {passwordError && (
+              <Alert type="error" onDismiss={() => setPasswordError(null)} dismissible>
+                {passwordError}
+              </Alert>
+            )}
+            <FormField label="Password" description="This paste is password-protected.">
+              <Input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.detail.value)}
+                onKeyDown={(e) => {
+                  if (e.detail.key === "Enter") handleUnlock();
+                }}
+                placeholder="Enter password"
+              />
+            </FormField>
+            <Button variant="primary" onClick={handleUnlock} loading={unlocking}>
+              Unlock
+            </Button>
+          </SpaceBetween>
+        </Container>
+      </ContentLayout>
+    );
+  }
+
   if (status === "error" || !paste) {
     return (
       <ContentLayout header={<Header variant="h1">Error</Header>}>
@@ -123,9 +197,11 @@ export default function PasteView() {
               <Button onClick={handleCopy} iconName={copied ? "status-positive" : "copy"}>
                 {copied ? "Copied!" : "Copy"}
               </Button>
-              <Button href={`/api/paste/${id}/raw`} target="_blank" iconName="external">
-                Raw
-              </Button>
+              {!paste.protected && (
+                <Button href={`/api/paste/${id}/raw`} target="_blank" iconName="external">
+                  Raw
+                </Button>
+              )}
             </SpaceBetween>
           }
         >

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Handlers struct {
@@ -20,6 +22,7 @@ type createRequest struct {
 	Content  string `json:"content"`
 	Language string `json:"language"`
 	Expiry   int    `json:"expiry"`
+	Password string `json:"password"`
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -53,10 +56,26 @@ func (h *Handlers) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var passwordHash string
+	if req.Password != "" {
+		if len(req.Password) > 72 {
+			writeError(w, http.StatusBadRequest, "password exceeds 72 characters")
+			return
+		}
+		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to process password")
+			return
+		}
+		passwordHash = string(hash)
+	}
+
 	p := &Paste{
-		Title:    req.Title,
-		Content:  req.Content,
-		Language: req.Language,
+		Title:        req.Title,
+		Content:      req.Content,
+		Language:     req.Language,
+		PasswordHash: passwordHash,
+		Protected:    passwordHash != "",
 	}
 
 	if req.Expiry < 1 || req.Expiry > 10 {
@@ -93,6 +112,13 @@ func (h *Handlers) Get(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusGone, "paste has expired")
 		return
 	}
+	if p.Protected {
+		pw := r.Header.Get("X-Paste-Password")
+		if pw == "" || bcrypt.CompareHashAndPassword([]byte(p.PasswordHash), []byte(pw)) != nil {
+			writeJSON(w, http.StatusForbidden, map[string]any{"protected": true, "error": "password required"})
+			return
+		}
+	}
 	writeJSON(w, http.StatusOK, p)
 }
 
@@ -111,6 +137,13 @@ func (h *Handlers) GetRaw(w http.ResponseWriter, r *http.Request) {
 		h.store.Delete(id)
 		http.Error(w, "paste has expired", http.StatusGone)
 		return
+	}
+	if p.Protected {
+		pw := r.Header.Get("X-Paste-Password")
+		if pw == "" || bcrypt.CompareHashAndPassword([]byte(p.PasswordHash), []byte(pw)) != nil {
+			http.Error(w, "password required", http.StatusForbidden)
+			return
+		}
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("X-Content-Type-Options", "nosniff")

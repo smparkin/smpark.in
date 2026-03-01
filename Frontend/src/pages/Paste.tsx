@@ -41,6 +41,7 @@ export default function Paste() {
   const [content, setContent] = useState("");
   const [language, setLanguage] = useState(LANGUAGE_OPTIONS[0]);
   const [expiry, setExpiry] = useState(5);
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +61,7 @@ export default function Paste() {
           content,
           language: language.value,
           expiry,
+          password: password || undefined,
         }),
       });
       const data = await res.json();
@@ -107,6 +109,14 @@ export default function Paste() {
                 setLanguage(e.detail.selectedOption as { label: string; value: string })
               }
               options={LANGUAGE_OPTIONS}
+            />
+          </FormField>
+          <FormField label="Password" description="Optional. Leave blank for a public paste.">
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.detail.value)}
+              placeholder="Leave blank for no password"
             />
           </FormField>
           <FormField label="Expires" description={`${expiry} minute${expiry === 1 ? "" : "s"}`}>

@@ -10,12 +10,14 @@ import (
 var ErrNotFound = errors.New("paste not found")
 
 type Paste struct {
-	ID        string     `json:"id"`
-	Title     string     `json:"title"`
-	Content   string     `json:"content"`
-	Language  string     `json:"language"`
-	CreatedAt time.Time  `json:"created_at"`
-	ExpiresAt *time.Time `json:"expires_at"`
+	ID           string     `json:"id"`
+	Title        string     `json:"title"`
+	Content      string     `json:"content"`
+	Language     string     `json:"language"`
+	CreatedAt    time.Time  `json:"created_at"`
+	ExpiresAt    *time.Time `json:"expires_at"`
+	PasswordHash string     `json:"-"`
+	Protected    bool       `json:"protected"`
 }
 
 type Store struct {
