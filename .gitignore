@@ -2,13 +2,9 @@
 .DS_Store
 
 # Frontend
-Frontend/node_modules
-Frontend/dist
+frontend/node_modules
+frontend/dist
 
 # Backend
-Backend/server
-Backend/public/app/
-
-# Rust Backend
-rust_backend/public/app/
+backend/public/app/
 **/target
