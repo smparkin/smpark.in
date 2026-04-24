@@ -5,8 +5,8 @@ on:
     branches:
       - master
     paths:
-      - 'Backend/**'
-      - 'Frontend/**'
+      - 'backend/**'
+      - 'frontend/**'
       - 'Dockerfile'
       - '.gitea/workflows/build-and-deploy.yml'
   workflow_dispatch:
