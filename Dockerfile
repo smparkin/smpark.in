@@ -4,36 +4,37 @@
 FROM node:22-slim AS frontend
 
 WORKDIR /frontend
-COPY frontend/package.json frontend/package-lock.json ./
+COPY Frontend/package.json Frontend/package-lock.json ./
 RUN npm ci
-COPY frontend/ ./
-RUN npm run build
+COPY Frontend/ ./
+RUN npm run build -- --outDir dist --emptyOutDir
 
 # ================================
 # Backend build
 # ================================
-FROM rust:1-slim AS backend
+FROM golang:1.26-alpine AS backend
 
 WORKDIR /build
-COPY backend/Cargo.toml backend/Cargo.lock ./
-RUN mkdir src && echo "fn main() {}" > src/main.rs && cargo build --release && rm -rf src
-
-COPY backend/src ./src
-RUN touch src/main.rs && cargo build --release
+COPY Backend/ ./
+RUN CGO_ENABLED=0 go build -o server .
 
 # ================================
 # Runtime
 # ================================
-FROM debian:bookworm-slim
+FROM alpine:3.21
 
-RUN adduser --disabled-password --gecos "" --home /app app
+RUN adduser -D -h /app app
 WORKDIR /app
 
-COPY --from=backend --chown=app:app /build/target/release/rust_backend ./
+# Copy Go binary
+COPY --from=backend --chown=app:app /build/server ./
 
-COPY --chown=app:app backend/public/ ./public/
+# Copy static assets
+COPY --chown=app:app Backend/public/ ./public/
+
+# Copy built frontend
 COPY --from=frontend --chown=app:app /frontend/dist ./public/app/
 
 USER app
 EXPOSE 8080
-ENTRYPOINT ["./rust_backend"]
+ENTRYPOINT ["./server"]

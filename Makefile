@@ -3,20 +3,20 @@
 all: frontend backend
 
 frontend:
-	cd frontend && npm run build
+	cd Frontend && npm run build
 
 backend:
-	cd backend && cargo build --release
+	cd Backend && go build -o server .
 
 run: all
-	cd backend && ./target/release/rust_backend
+	cd Backend && ./server
 
 dev:
-	cd frontend && npm run dev
+	cd Frontend && npm run dev
 
 clean:
-	rm -rf backend/target backend/public/app
+	rm -rf Backend/server Backend/public/app
 
 upgrade:
-	cd frontend && npm upgrade
-	cd backend && cargo update
+	cd Frontend && npm upgrade
+	cd Backend && go get -u ./... && go mod tidy
