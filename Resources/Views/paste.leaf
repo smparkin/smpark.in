@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>New Paste — Stephen Parkinson</title>
+        <style>
+            * { box-sizing: border-box; }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #121212;
+                color: #ffffff;
+            }
+            nav {
+                background-color: #1e1e1e;
+                border-bottom: 2px solid #9370db;
+                padding: 12px 20px;
+                display: flex;
+                gap: 20px;
+                align-items: center;
+            }
+            nav a { color: #9370db; text-decoration: none; font-weight: bold; }
+            nav a:hover { text-decoration: underline; }
+            h1 { color: #9370db; margin: 28px auto 0 auto; max-width: 700px; padding: 0 24px; font-size: 1.6rem; }
+            section {
+                max-width: 700px;
+                margin: 20px auto 40px auto;
+                padding: 24px;
+                background-color: #1e1e1e;
+                border-radius: 10px;
+            }
+            label {
+                display: block;
+                margin-bottom: 4px;
+                font-weight: bold;
+                color: #cccccc;
+                font-size: 0.9rem;
+            }
+            .hint { color: #888888; font-size: 0.8rem; margin-bottom: 8px; }
+            input[type="text"],
+            input[type="password"],
+            input[type="number"],
+            select,
+            textarea {
+                width: 100%;
+                padding: 8px 10px;
+                border-radius: 6px;
+                border: 1px solid #444;
+                background-color: #2a2a2a;
+                color: #ffffff;
+                font-size: 0.95rem;
+                font-family: inherit;
+                margin-bottom: 16px;
+            }
+            textarea {
+                font-family: monospace;
+                resize: vertical;
+                min-height: 300px;
+            }
+            input:focus, select:focus, textarea:focus {
+                outline: none;
+                border-color: #9370db;
+            }
+            .row { display: flex; gap: 16px; }
+            .row > div { flex: 1; }
+            button {
+                background-color: #9370db;
+                color: #ffffff;
+                border: none;
+                border-radius: 6px;
+                padding: 10px 24px;
+                font-size: 1rem;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            button:hover { background-color: #7b5cbf; }
+            button:disabled { opacity: 0.6; cursor: not-allowed; }
+            .error {
+                background-color: #4a1a1a;
+                border: 1px solid #cc3333;
+                border-radius: 6px;
+                padding: 10px 14px;
+                margin-bottom: 16px;
+                color: #ff8888;
+                display: none;
+            }
+            .expiry-label { margin-bottom: 4px; }
+            .expiry-value { color: #9370db; font-weight: bold; }
+            input[type="range"] {
+                -webkit-appearance: none;
+                width: 100%;
+                height: 6px;
+                border-radius: 3px;
+                background: #444;
+                outline: none;
+                padding: 0;
+                margin-bottom: 8px;
+                border: none;
+            }
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: #9370db;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/resume">Resume</a>
+            <a href="/paste">Paste</a>
+        </nav>
+
+        <h1>New Paste</h1>
+
+        <section>
+            <div id="error" class="error"></div>
+
+            <label for="title">Title</label>
+            <div class="hint">Optional title for your paste.</div>
+            <input type="text" id="title" placeholder="Untitled" maxlength="200" />
+
+            <label for="content">Content <span style="color:#cc3333">*</span></label>
+            <div class="hint">Required. Maximum 1 MB.</div>
+            <textarea id="content" placeholder="Paste your content here..." spellcheck="false"></textarea>
+
+            <div class="row">
+                <div>
+                    <label for="language">Language</label>
+                    <select id="language">
+                        <option value="plaintext">Plain Text</option>
+                        <option value="bash">Bash</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                        <option value="css">CSS</option>
+                        <option value="dockerfile">Dockerfile</option>
+                        <option value="go">Go</option>
+                        <option value="html">HTML</option>
+                        <option value="java">Java</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="json">JSON</option>
+                        <option value="kotlin">Kotlin</option>
+                        <option value="markdown">Markdown</option>
+                        <option value="python">Python</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="rust">Rust</option>
+                        <option value="sql">SQL</option>
+                        <option value="swift">Swift</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="yaml">YAML</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Leave blank for no password" />
+                </div>
+            </div>
+
+            <label class="expiry-label">
+                Expires: <span class="expiry-value" id="expiry-display">5 minutes</span>
+            </label>
+            <input type="range" id="expiry" min="1" max="10" value="5"
+                   oninput="document.getElementById('expiry-display').textContent = this.value + ' minute' + (this.value == 1 ? '' : 's')" />
+
+            <button id="submit-btn" onclick="submitPaste()">Create Paste</button>
+        </section>
+
+        <script>
+            async function submitPaste() {
+                const content = document.getElementById('content').value;
+                if (!content.trim()) {
+                    showError('Content is required.');
+                    return;
+                }
+
+                const btn = document.getElementById('submit-btn');
+                btn.disabled = true;
+                btn.textContent = 'Creating…';
+                hideError();
+
+                try {
+                    const res = await fetch('/api/paste', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: document.getElementById('title').value.trim(),
+                            content,
+                            language: document.getElementById('language').value,
+                            expiry: parseInt(document.getElementById('expiry').value),
+                            password: document.getElementById('password').value || undefined,
+                        }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok) {
+                        showError(data.error || 'Failed to create paste.');
+                        return;
+                    }
+                    sessionStorage.setItem('pastePassword_' + data.id, document.getElementById('password').value || '');
+                    window.location.href = data.url;
+                } catch {
+                    showError('Network error. Please try again.');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Create Paste';
+                }
+            }
+
+            function showError(msg) {
+                const el = document.getElementById('error');
+                el.textContent = msg;
+                el.style.display = 'block';
+            }
+            function hideError() {
+                document.getElementById('error').style.display = 'none';
+            }
+        </script>
+    </body>
+</html>

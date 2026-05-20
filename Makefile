@@ -1,22 +1,19 @@
-.PHONY: all frontend backend run dev clean upgrade
+.PHONY: build run release docker-build docker-up clean
 
-all: frontend backend
+build:
+	swift build
 
-frontend:
-	cd frontend && npm run build
+run:
+	swift run
 
-backend:
-	cd backend && go build -o server .
+release:
+	swift build -c release
 
-run: all
-	cd backend && ./server
+docker-build:
+	docker build -t sparkii/smparkin:latest .
 
-dev:
-	cd frontend && npm run dev
+docker-up:
+	docker compose up
 
 clean:
-	rm -rf backend/server backend/public/app
-
-upgrade:
-	cd frontend && npm upgrade
-	cd backend && go get -u ./... && go mod tidy
+	swift package clean

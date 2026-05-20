@@ -1,10 +1,5 @@
 .vscode
 .DS_Store
-
-# Frontend
-frontend/node_modules
-frontend/dist
-
-# Backend
-backend/server
-backend/public/app/
+.build
+.swiftpm
+Package.resolved

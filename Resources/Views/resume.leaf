@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Resume — Stephen Parkinson</title>
+        <style>
+            * { box-sizing: border-box; }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #121212;
+                color: #ffffff;
+            }
+            nav {
+                background-color: #1e1e1e;
+                border-bottom: 2px solid #9370db;
+                padding: 12px 20px;
+                display: flex;
+                gap: 20px;
+                align-items: center;
+            }
+            nav a {
+                color: #9370db;
+                text-decoration: none;
+                font-weight: bold;
+            }
+            nav a:hover { text-decoration: underline; }
+            h1 {
+                margin: 0 0 4px 0;
+                color: #9370db;
+                font-size: 1.6rem;
+            }
+            h2 { color: #9370db; margin: 0 0 12px 0; font-size: 1.2rem; }
+            h3 { color: #ffffff; margin: 0 0 4px 0; font-size: 1rem; }
+            section {
+                max-width: 800px;
+                margin: 24px auto;
+                padding: 20px 24px;
+                background-color: #1e1e1e;
+                border-radius: 10px;
+            }
+            .page-title {
+                max-width: 800px;
+                margin: 28px auto 0 auto;
+                padding: 0 24px;
+            }
+            .meta {
+                color: #aaaaaa;
+                font-size: 0.85rem;
+                margin: 2px 0 8px 0;
+            }
+            ul { margin: 6px 0; padding-left: 20px; }
+            li { margin-bottom: 4px; }
+            .cols { display: flex; gap: 24px; flex-wrap: wrap; }
+            .col { flex: 1; min-width: 180px; }
+            footer {
+                text-align: center;
+                padding: 20px;
+                background-color: #1e1e1e;
+                border-top: 2px solid #9370db;
+                margin-top: 40px;
+            }
+            .job { margin-bottom: 20px; }
+            .job:last-child { margin-bottom: 0; }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/resume">Resume</a>
+        </nav>
+
+        <div class="page-title">
+            <h1>Resume</h1>
+        </div>
+
+        <section>
+            <h2>Employment</h2>
+            <div class="job">
+                <h3>Systems Development Engineer, Amazon Security</h3>
+                <p class="meta">San Luis Obispo, CA &middot; April 2020 &ndash; Present (Promoted to full-time July 2022)</p>
+                <ul>
+                    <li>Create and deploy serverless applications to collect and enrich data for analysis.</li>
+                    <li>Add monitoring and alarming to existing services to allow for easier diagnosing of potential issues.</li>
+                    <li>Work with customers to understand requirements and deliver results quickly.</li>
+                </ul>
+            </div>
+            <div class="job">
+                <h3>Student Assistant, On-Site Support Cal Poly ITS</h3>
+                <p class="meta">San Luis Obispo, CA &middot; May 2019 &ndash; February 2020</p>
+                <ul>
+                    <li>Responsible for support of computer services and equipment across multiple departments.</li>
+                    <li>Troubleshooting, detecting, and solving of technical problems.</li>
+                    <li>Managing macOS and Windows based computers using Active Directory, SCCM, and Jamf.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Education</h2>
+            <div class="job">
+                <h3>California Polytechnic State University</h3>
+                <p class="meta">2017 &ndash; 2022</p>
+                <p><strong>Software Engineering</strong><br />
+                Relevant Coursework: Introduction to Computing, Fundamentals of Computer Science,
+                Data Structures, Project-Based Object-Oriented Programming &amp; Design,
+                Introduction to Computer Organization, Systems Programming, and Introduction to Operating Systems.</p>
+            </div>
+            <div class="job">
+                <h3>Cal Poly Security Education Club &mdash; President</h3>
+                <p class="meta">Spring 2020 &ndash; Spring 2021</p>
+                <ul>
+                    <li>Responsible for planning and logistics of events including iFixit Triathlon and Security Career Fair.</li>
+                    <li>Manage a team of student officers to introduce students to security topics at all skill levels.</li>
+                    <li>Coordinate with companies for presentations and special events.</li>
+                    <li>Presented technical talks such as "iOS Security and Jailbreaking", "machswap, a vulnerability in XNU IPC", "Intro to SSH", "Nintendo Switch Security", "macOS Security", and "Mac File Systems and APFS Security".</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Skills</h2>
+            <div class="cols">
+                <div class="col">
+                    <h3>Languages &amp; Tools</h3>
+                    <p>Python, TypeScript, React, JavaScript, C, Swift, git, zsh, Burp Suite</p>
+                </div>
+                <div class="col">
+                    <h3>AWS</h3>
+                    <p>Lambda, S3, DynamoDB, CloudWatch, KMS, SSM, SES, SQS, SNS, CDK</p>
+                </div>
+                <div class="col">
+                    <h3>Operating Systems</h3>
+                    <p>macOS, Windows, Linux</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Projects</h2>
+            <ul>
+                <li>Developed a watchOS app to show the status of the White Hat lab on an Apple Watch.</li>
+                <li>Created a Python script to control Spotify's API from the command line.</li>
+                <li>Upgraded White Hat's network infrastructure to take advantage of the 1Gbps connection to the internet.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; #(year) Stephen Parkinson. All rights reserved.</p>
+        </footer>
+    </body>
+</html>
