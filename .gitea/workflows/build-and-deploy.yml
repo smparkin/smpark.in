@@ -5,8 +5,12 @@ on:
     branches:
       - master
     paths:
-      - 'backend/**'
-      - 'frontend/**'
+      - 'Sources/**'
+      - 'Tests/**'
+      - 'Resources/**'
+      - 'Public/**'
+      - 'Package.swift'
+      - 'Package.resolved'
       - 'Dockerfile'
       - '.gitea/workflows/build-and-deploy.yml'
   workflow_dispatch:
