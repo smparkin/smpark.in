@@ -1,13 +1,18 @@
 # ================================
 # Build image
 # ================================
-FROM swift:6.1.0-noble AS build
+FROM --platform=$BUILDPLATFORM swift:6.1.0-noble AS build
 
-# Install OS updates and, if needed, sqlite3
+# Install OS updates
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y\
     && rm -rf /var/lib/apt/lists/*
+
+# Install the Static Linux SDK for cross-compiling to linux/amd64
+RUN swift sdk install \
+    https://download.swift.org/swift-6.1-release/static-sdk/swift-6.1-RELEASE/swift-6.1-RELEASE_static-linux-0.0.1.artifactbundle.tar.gz \
+    --checksum 111c6f7d280a651208b8c74c0521dd99365d785c1976a6e23162f55f65379ac6
 
 # Set up a build area
 WORKDIR /build
@@ -17,22 +22,22 @@ WORKDIR /build
 # as long as your Package.swift/Package.resolved
 # files do not change.
 COPY ./Package.* ./
-RUN swift package resolve
+RUN swift package resolve --swift-sdk x86_64-swift-linux-musl
 
 # Copy entire repo into container
 COPY . .
 
 # Build everything, with optimizations
-RUN swift build -c release --static-swift-stdlib
+RUN swift build -c release --swift-sdk x86_64-swift-linux-musl
 
 # Switch to the staging area
 WORKDIR /staging
 
 # Copy main executable to staging area
-RUN cp "$(swift build --package-path /build -c release --show-bin-path)/Run" ./
+RUN cp "$(swift build --package-path /build -c release --swift-sdk x86_64-swift-linux-musl --show-bin-path)/Run" ./
 
 # Copy resources bundled by SPM to staging area
-RUN find -L "$(swift build --package-path /build -c release --show-bin-path)/" -regex '.*\.resources$' -exec cp -Ra {} ./ \;
+RUN find -L "$(swift build --package-path /build -c release --swift-sdk x86_64-swift-linux-musl --show-bin-path)/" -regex '.*\.resources$' -exec cp -Ra {} ./ \;
 
 # Copy any resources from the public directory and views directory if the directories exist
 # Ensure that by default, neither the directory nor any of its contents are writable.

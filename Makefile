@@ -10,7 +10,7 @@ release:
 	swift build -c release
 
 docker-build:
-	docker build -t sparkii/smparkin:latest .
+	docker buildx build --platform linux/amd64 -t smparkin/website:local --load .
 
 docker-up:
 	docker compose up
