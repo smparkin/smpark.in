@@ -1,0 +1,15 @@
+excluded:
+  - .build
+  - Tests/LinuxMain.swift
+
+opt_in_rules:
+  - force_unwrapping
+  - private_over_fileprivate
+  - explicit_init
+
+line_length:
+  warning: 120
+  error: 160
+
+identifier_name:
+  min_length: 2

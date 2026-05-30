@@ -13,7 +13,7 @@ public func configure(_ app: Application) throws {
 
     let store = PasteStore()
     app.pasteStore = store
-    Task { await store.startExpiryWorker() }
+    app.lifecycle.use(ExpiryLifecycle(store: store))
 
     try routes(app)
 }

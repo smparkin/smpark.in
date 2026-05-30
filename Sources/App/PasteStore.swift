@@ -3,13 +3,13 @@ import Vapor
 
 struct Paste: Codable, Sendable {
     var id: String
-    var title: String
-    var content: String
-    var language: String
+    let title: String
+    let content: String
+    let language: String
     var createdAt: Date
-    var expiresAt: Date?
-    var passwordHash: String?
-    var isProtected: Bool
+    let expiresAt: Date?
+    let passwordHash: String?
+    let isProtected: Bool
 }
 
 struct PasteStoreKey: StorageKey {
@@ -33,10 +33,13 @@ extension Application {
 actor PasteStore {
     private var pastes: [String: Paste] = [:]
 
-    func create(_ paste: inout Paste) {
-        paste.id = Self.generateID()
-        paste.createdAt = Date()
-        pastes[paste.id] = paste
+    @discardableResult
+    func create(_ paste: Paste) -> String {
+        var stored = paste
+        stored.id = Self.generateID()
+        stored.createdAt = Date()
+        pastes[stored.id] = stored
+        return stored.id
     }
 
     func get(_ id: String) -> Paste? {
@@ -48,21 +51,25 @@ actor PasteStore {
     }
 
     func startExpiryWorker() async {
-        while true {
-            try? await Task.sleep(nanoseconds: 30_000_000_000)
-            let now = Date()
-            let expired = pastes.compactMap { id, p -> String? in
-                guard let exp = p.expiresAt, now > exp else { return nil }
-                return id
+        do {
+            while true {
+                try await Task.sleep(nanoseconds: 30_000_000_000)
+                let now = Date()
+                let expired = pastes.compactMap { id, paste -> String? in
+                    guard let exp = paste.expiresAt, now > exp else { return nil }
+                    return id
+                }
+                for id in expired {
+                    pastes.removeValue(forKey: id)
+                }
             }
-            for id in expired {
-                pastes.removeValue(forKey: id)
-            }
+        } catch {
+            // task was cancelled on shutdown
         }
     }
 
     private static func generateID() -> String {
-        let chars = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
-        return String((0..<8).map { _ in chars.randomElement()! })
+        let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        return String((0..<8).compactMap { _ in chars.randomElement() })
     }
 }

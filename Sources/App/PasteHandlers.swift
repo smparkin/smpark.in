@@ -2,35 +2,42 @@ import Foundation
 import Vapor
 
 struct PasteCreateRequest: Content {
-    var title: String?
-    var content: String
-    var language: String?
-    var expiry: Int
-    var password: String?
+    let title: String?
+    let content: String
+    let language: String?
+    let expiry: Int
+    let password: String?
 }
 
 struct PasteCreateResponse: Content {
-    var id: String
-    var url: String
+    let id: String
+    let url: String
 }
 
 struct PastePublic: Content {
-    var id: String
-    var title: String
-    var content: String
-    var language: String
-    var created_at: Date
-    var expires_at: Date?
-    var protected: Bool
+    let id: String
+    let title: String
+    let content: String
+    let language: String
+    let createdAt: Date
+    let expiresAt: Date?
+    let isProtected: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, content, language
+        case createdAt = "created_at"
+        case expiresAt = "expires_at"
+        case isProtected = "protected"
+    }
 }
 
 struct ErrorBody: Content {
-    var error: String
+    let error: String
 }
 
 struct LockedBody: Content {
-    var protected: Bool
-    var error: String
+    let protected: Bool
+    let error: String
 }
 
 func pasteCreateHandler(_ req: Request) async throws -> Response {
@@ -49,7 +56,7 @@ func pasteCreateHandler(_ req: Request) async throws -> Response {
         return errorResponse(req, .badRequest, "expiry must be between 1 and 10 minutes")
     }
 
-    var hash: String? = nil
+    var hash: String?
     if let pw = body.password, !pw.isEmpty {
         guard pw.count <= 72 else {
             return errorResponse(req, .badRequest, "password exceeds 72 characters")
@@ -57,7 +64,7 @@ func pasteCreateHandler(_ req: Request) async throws -> Response {
         hash = try Bcrypt.hash(pw)
     }
 
-    var paste = Paste(
+    let paste = Paste(
         id: "",
         title: body.title ?? "",
         content: body.content,
@@ -69,10 +76,10 @@ func pasteCreateHandler(_ req: Request) async throws -> Response {
     )
 
     let store = req.application.pasteStore
-    await store.create(&paste)
+    let id = await store.create(paste)
 
     let resp = Response(status: .created)
-    try resp.content.encode(PasteCreateResponse(id: paste.id, url: "/paste/\(paste.id)"))
+    try resp.content.encode(PasteCreateResponse(id: id, url: "/paste/\(id)"))
     return resp
 }
 
@@ -92,8 +99,10 @@ func pasteGetHandler(_ req: Request) async throws -> Response {
     }
 
     if paste.isProtected {
-        let pw = req.headers.first(name: "X-Paste-Password") ?? ""
-        let valid = !pw.isEmpty && (try? Bcrypt.verify(pw, created: paste.passwordHash ?? "")) == true
+        let pw = req.headers.first(name: "X-Paste-Password")
+        let valid = pw.map {
+            !$0.isEmpty && (try? Bcrypt.verify($0, created: paste.passwordHash ?? "")) == true
+        } ?? false
         if !valid {
             let resp = Response(status: .forbidden)
             try resp.content.encode(LockedBody(protected: true, error: "password required"))
@@ -106,9 +115,9 @@ func pasteGetHandler(_ req: Request) async throws -> Response {
         title: paste.title,
         content: paste.content,
         language: paste.language,
-        created_at: paste.createdAt,
-        expires_at: paste.expiresAt,
-        protected: paste.isProtected
+        createdAt: paste.createdAt,
+        expiresAt: paste.expiresAt,
+        isProtected: paste.isProtected
     )
     let resp = Response(status: .ok)
     try resp.content.encode(pub)
@@ -131,8 +140,10 @@ func pasteGetRawHandler(_ req: Request) async throws -> Response {
     }
 
     if paste.isProtected {
-        let pw = req.headers.first(name: "X-Paste-Password") ?? ""
-        let valid = !pw.isEmpty && (try? Bcrypt.verify(pw, created: paste.passwordHash ?? "")) == true
+        let pw = req.headers.first(name: "X-Paste-Password")
+        let valid = pw.map {
+            !$0.isEmpty && (try? Bcrypt.verify($0, created: paste.passwordHash ?? "")) == true
+        } ?? false
         if !valid {
             return Response(status: .forbidden, body: .init(string: "password required"))
         }

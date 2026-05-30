@@ -1,4 +1,4 @@
-.PHONY: build run release docker-build docker-up clean
+.PHONY: build run release docker-build docker-up clean lint
 
 build:
 	swift build
@@ -17,3 +17,6 @@ docker-up:
 
 clean:
 	swift package clean
+
+lint:
+	swiftlint lint --strict
