@@ -4,66 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Resume — Stephen Parkinson</title>
-        <style>
-            * { box-sizing: border-box; }
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background-color: #121212;
-                color: #ffffff;
-            }
-            nav {
-                background-color: #1e1e1e;
-                border-bottom: 2px solid #9370db;
-                padding: 12px 20px;
-                display: flex;
-                gap: 20px;
-                align-items: center;
-            }
-            nav a {
-                color: #9370db;
-                text-decoration: none;
-                font-weight: bold;
-            }
-            nav a:hover { text-decoration: underline; }
-            h1 {
-                margin: 0 0 4px 0;
-                color: #9370db;
-                font-size: 1.6rem;
-            }
-            h2 { color: #9370db; margin: 0 0 12px 0; font-size: 1.2rem; }
-            h3 { color: #ffffff; margin: 0 0 4px 0; font-size: 1rem; }
-            section {
-                max-width: 800px;
-                margin: 24px auto;
-                padding: 20px 24px;
-                background-color: #1e1e1e;
-                border-radius: 10px;
-            }
-            .page-title {
-                max-width: 800px;
-                margin: 28px auto 0 auto;
-                padding: 0 24px;
-            }
-            .meta {
-                color: #aaaaaa;
-                font-size: 0.85rem;
-                margin: 2px 0 8px 0;
-            }
-            ul { margin: 6px 0; padding-left: 20px; }
-            li { margin-bottom: 4px; }
-            .cols { display: flex; gap: 24px; flex-wrap: wrap; }
-            .col { flex: 1; min-width: 180px; }
-            footer {
-                text-align: center;
-                padding: 20px;
-                background-color: #1e1e1e;
-                border-top: 2px solid #9370db;
-                margin-top: 40px;
-            }
-            .job { margin-bottom: 20px; }
-            .job:last-child { margin-bottom: 0; }
-        </style>
+        <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
         <nav>

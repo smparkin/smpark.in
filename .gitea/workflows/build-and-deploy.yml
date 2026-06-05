@@ -5,19 +5,19 @@ on:
     branches:
       - master
     paths:
-      - 'Sources/**'
-      - 'Tests/**'
-      - 'Resources/**'
-      - 'Public/**'
-      - 'Package.swift'
-      - 'Package.resolved'
-      - 'Dockerfile'
-      - '.gitea/workflows/build-and-deploy.yml'
+      - "Sources/**"
+      - "Tests/**"
+      - "Resources/**"
+      - "Public/**"
+      - "Package.swift"
+      - "Package.resolved"
+      - "Dockerfile"
+      - ".gitea/workflows/build-and-deploy.yml"
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: mac
+    runs-on: nuc
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

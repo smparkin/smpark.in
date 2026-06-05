@@ -1,0 +1,278 @@
+/* ── Base ─────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* ── Links ───────────────────────────────────────── */
+a:link, a:visited {
+    color: #9370db;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+a:hover, a:active { text-decoration: underline; }
+
+/* ── Nav ─────────────────────────────────────────── */
+nav {
+    background-color: #1e1e1e;
+    border-bottom: 2px solid #9370db;
+    padding: 12px 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+nav a { color: #9370db; text-decoration: none; font-weight: bold; }
+nav a:hover { text-decoration: underline; }
+
+/* ── Headings ────────────────────────────────────── */
+h1 { color: #9370db; }
+h2 { color: #9370db; margin: 0 0 12px 0; font-size: 1.2rem; }
+h3 { color: #ffffff; margin: 0 0 4px 0; font-size: 1rem; }
+
+/* ── Section cards ───────────────────────────────── */
+section {
+    max-width: 800px;
+    margin: 24px auto;
+    padding: 20px 24px;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+}
+
+/* ── Page title area ─────────────────────────────── */
+.page-title {
+    max-width: 800px;
+    margin: 28px auto 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.page-title h1 { margin: 0; font-size: 1.5rem; word-break: break-all; }
+
+/* ── Footer ──────────────────────────────────────── */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-top: 2px solid #9370db;
+    margin-top: 40px;
+}
+
+/* ── Home: header ────────────────────────────────── */
+header {
+    background-color: #1e1e1e;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #9370db;
+}
+header h1 { margin: 0; }
+header img {
+    max-width: 150px;
+    height: auto;
+    border-radius: 50%;
+    border: 2px solid #9370db;
+    display: block;
+    margin: 10px auto;
+}
+section img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto;
+    border-radius: 10px;
+    border: 2px solid #9370db;
+}
+
+/* ── Resume ──────────────────────────────────────── */
+.meta { color: #aaaaaa; font-size: 0.85rem; margin: 2px 0 8px 0; }
+ul { margin: 6px 0; padding-left: 20px; }
+li { margin-bottom: 4px; }
+.cols { display: flex; gap: 24px; flex-wrap: wrap; }
+.col { flex: 1; min-width: 180px; }
+.job { margin-bottom: 20px; }
+.job:last-child { margin-bottom: 0; }
+
+/* ── Forms ───────────────────────────────────────── */
+label { display: block; margin-bottom: 4px; font-weight: bold; color: #cccccc; font-size: 0.9rem; }
+.hint { color: #888888; font-size: 0.8rem; margin-bottom: 8px; }
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background-color: #2a2a2a;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-family: inherit;
+    margin-bottom: 16px;
+}
+textarea { font-family: monospace; resize: vertical; min-height: 300px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #9370db; }
+.row { display: flex; gap: 16px; }
+.row > div { flex: 1; }
+.required { color: #cc3333; }
+
+/* ── Buttons ─────────────────────────────────────── */
+button, .btn {
+    background-color: #2a2a2a;
+    color: #9370db;
+    border: 1px solid #9370db;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+button:hover, .btn:hover { background-color: #9370db; color: #ffffff; }
+
+/* Primary / filled buttons */
+#submit-btn, .unlock-btn {
+    background-color: #9370db;
+    color: #ffffff;
+    border: none;
+    padding: 10px 24px;
+    font-size: 1rem;
+}
+#submit-btn:hover, .unlock-btn:hover { background-color: #7b5cbf; }
+#submit-btn:disabled, .unlock-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Syntax highlighting ─────────────────────────── */
+/* Drop the theme's `.hljs` background so highlighted code sits on our own
+   surface. This outranks the theme's plain `.hljs` selector on specificity. */
+pre code.hljs { background: transparent; }
+/* The theme also sets `pre code.hljs { padding: 1em }` — identical specificity
+   to the line above and it loads later, so it would win. In the editor that
+   padding offsets the highlighted <pre> from the overlaid <textarea> and breaks
+   caret alignment, so beat it with an extra class scoped to the editor. */
+.editor-wrapper pre code.hljs { padding: 0; }
+
+/* Code editor: a transparent <textarea> layered over a highlighted <pre>.
+   Both layers share an identical box model so the text aligns exactly; the
+   in-flow <pre> drives the height and the absolutely-positioned <textarea>
+   stretches to match, so the two can never drift apart. */
+.editor-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background-color: #2a2a2a;
+    overflow: hidden;
+}
+.editor-wrapper:focus-within { border-color: #9370db; }
+
+/* Integer font-size and line-height (not 0.9rem / 1.5) so every line advances
+   by exactly 21px in both layers — fractional metrics round differently in a
+   textarea vs a pre and the caret drifts further down with each line. */
+.editor-wrapper pre,
+.editor-wrapper textarea {
+    margin: 0;
+    padding: 10px 12px;
+    border: 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 21px;
+    tab-size: 4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.editor-wrapper pre {
+    min-height: 300px;
+    pointer-events: none;
+}
+.editor-wrapper pre code { font-family: inherit; }
+
+.editor-wrapper textarea {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+    background: transparent;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    caret-color: #ffffff;
+    resize: none;
+    outline: none;
+    overflow: hidden;
+}
+.editor-wrapper textarea::placeholder {
+    color: #666;
+    -webkit-text-fill-color: #666;
+}
+
+/* ── Paste form ──────────────────────────────────── */
+nav + h1 {
+    color: #9370db;
+    margin: 28px auto 0 auto;
+    max-width: 800px;
+    padding: 0 24px;
+    font-size: 1.6rem;
+}
+.expiry-label { margin-bottom: 4px; }
+.expiry-value { color: #9370db; font-weight: bold; }
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #444;
+    outline: none;
+    padding: 0;
+    margin-bottom: 8px;
+    border: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #9370db;
+    cursor: pointer;
+}
+.error {
+    background-color: #4a1a1a;
+    border: 1px solid #cc3333;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    color: #ff8888;
+    display: none;
+}
+
+/* ── Paste view ──────────────────────────────────── */
+.actions { display: flex; gap: 8px; flex-shrink: 0; }
+.meta-grid { display: flex; gap: 32px; flex-wrap: wrap; }
+.meta-item .key {
+    font-size: 0.75rem;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+.meta-item .val { font-size: 0.95rem; }
+pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #e8e8e8;
+}
+.alert { border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; }
+.alert-error { background-color: #4a1a1a; border: 1px solid #cc3333; color: #ff8888; }
+.alert-warn { background-color: #3a2a00; border: 1px solid #cc8800; color: #ffcc44; }
+#loading { text-align: center; padding: 40px; color: #888; }
+

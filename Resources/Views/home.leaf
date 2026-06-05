@@ -4,78 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Stephen Parkinson</title>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background-color: #121212;
-                color: #ffffff;
-            }
-            header {
-                background-color: #1e1e1e;
-                padding: 20px;
-                text-align: center;
-                border-bottom: 2px solid #9370db !important;
-            }
-            header h1 {
-                margin: 0;
-                color: #9370db !important;
-            }
-            header img {
-                max-width: 150px;
-                height: auto;
-                border-radius: 50%;
-                border: 2px solid #9370db !important;
-                display: block;
-                margin: 10px auto;
-            }
-            a:link,
-            a:visited {
-                color: #9370db !important;
-                text-decoration: none;
-                transition: background-color 0.3s, color 0.3s;
-            }
-            a:hover,
-            a:active {
-                text-decoration: underline;
-            }
-            section {
-                max-width: 800px;
-                margin: 40px auto;
-                padding: 20px;
-                background-color: #1e1e1e;
-                border-radius: 10px;
-                box-sizing: border-box;
-            }
-            section img {
-                max-width: 100%;
-                height: auto;
-                display: block;
-                margin: 0 auto 20px auto;
-                border-radius: 10px;
-                border: 2px solid #9370db !important;
-            }
-            nav {
-                background-color: #1e1e1e;
-                border-bottom: 2px solid #9370db;
-                padding: 12px 20px;
-                display: flex;
-                gap: 20px;
-                align-items: center;
-            }
-            nav a {
-                color: #9370db;
-                text-decoration: none;
-                font-weight: bold;
-            }
-            nav a:hover { text-decoration: underline; }
-            footer {
-                text-align: center;
-                padding: 20px;
-                background-color: #1e1e1e;
-                border-top: 2px solid #9370db !important;
-            }
-        </style>
+        <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
         <nav>

@@ -11,12 +11,6 @@ public func routes(_ app: Application) throws {
     app.get("index.html") { req async throws -> View in
         try await req.view.render("home", ["year": currentYear()])
     }
-    app.get("privacy") { req async throws -> View in
-        try await req.view.render("privacy")
-    }
-    app.get("welcome") { req async throws -> View in
-        try await req.view.render("welcome")
-    }
     app.get("resume") { req async throws -> View in
         try await req.view.render("resume", ["year": currentYear()])
     }
