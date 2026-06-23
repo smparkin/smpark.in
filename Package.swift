@@ -7,15 +7,13 @@ let package = Package(
         .macOS(.v13)
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.114.0")),
-        .package(url: "https://github.com/vapor/leaf.git", .upToNextMajor(from: "4.5.0"))
+        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "4.114.0"))
     ],
     targets: [
         .target(
             name: "App",
             dependencies: [
-                .product(name: "Vapor", package: "vapor"),
-                .product(name: "Leaf", package: "leaf")
+                .product(name: "Vapor", package: "vapor")
             ],
             swiftSettings: [
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))

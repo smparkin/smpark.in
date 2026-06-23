@@ -1,19 +1,6 @@
-import Leaf
 import Vapor
 
 public func configure(_ app: Application) throws {
-    app.views.use(.leaf)
-
-    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory, defaultFile: "index.html"))
     app.middleware.use(ErrorMiddleware.default(environment: app.environment))
-
-    let encoder = JSONEncoder()
-    encoder.dateEncodingStrategy = .iso8601
-    ContentConfiguration.global.use(encoder: encoder, for: .json)
-
-    let store = PasteStore()
-    app.pasteStore = store
-    app.lifecycle.use(ExpiryLifecycle(store: store))
-
-    try routes(app)
 }
