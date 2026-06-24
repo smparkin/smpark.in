@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <id>urn:iweb:537CA4B6-9FA0-42A6-9E9B-92E3B8E3F59F</id>
+ <title>Page list Atom feed</title>
+ <updated>2026-06-23T18:41:35-07:00</updated>
+ <link rel="self" href="feed.xml"/>
+ <generator>iWeb</generator>
+ <author>
+  <name>iWeb</name>
+ </author>
+ <entry>
+  <id>urn:iweb:AF6D56ED-0733-4FE6-8685-A4C001E964A3</id>
+  <title>Home</title>
+  <title xmlns="urn:iweb:">Home</title>
+  <in-navbar xmlns="urn:iweb:">AF6D56ED-0733-4FE6-8685-A4C001E964A3</in-navbar>
+  <link rel="alternate" href="Home.html"/>
+  <updated>2026-06-23T18:41:35.001-07:00</updated>
+  <content>Home</content>
+ </entry>
+ <entry>
+  <id>urn:iweb:DA6F9604-25C8-446E-ABDB-10121F968EC2</id>
+  <title>Resume</title>
+  <title xmlns="urn:iweb:">Resume</title>
+  <in-navbar xmlns="urn:iweb:">DA6F9604-25C8-446E-ABDB-10121F968EC2</in-navbar>
+  <link rel="alternate" href="Resume.html"/>
+  <updated>2026-06-23T18:41:35.002-07:00</updated>
+  <content>Resume</content>
+ </entry>
+</feed>
