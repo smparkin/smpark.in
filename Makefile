@@ -1,12 +1,19 @@
-.PHONY: build run clean lint
-
-IMAGE = smparkin/website:local
+.PHONY: build run release docker-build docker-up clean lint
 
 build:
-	container build -t $(IMAGE) .
+	swift build
 
 run:
-	container run --rm -p 8080:8080 --rosetta $(IMAGE)
+	swift run
+
+release:
+	swift build -c release
+
+docker-build:
+	docker buildx build --platform linux/amd64 -t smparkin/website:local --load .
+
+docker-up:
+	docker compose up
 
 clean:
 	swift package clean
