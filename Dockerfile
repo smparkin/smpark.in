@@ -1,7 +1,9 @@
 # ================================
 # Build image
 # ================================
-FROM --platform=$BUILDPLATFORM swift:6.1.0-noble AS build
+# Held at 6.3: the 6.4.x static Linux SDK can't compile Vapor
+# (`ambiguous use of 'init(_:)'` on String(repeatElement(...)) — _RegexParser leaks in).
+FROM --platform=$BUILDPLATFORM swift:6.3.3-noble AS build
 
 # Install OS updates
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
@@ -11,8 +13,8 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
 
 # Install the Static Linux SDK for cross-compiling to linux/amd64
 RUN swift sdk install \
-    https://download.swift.org/swift-6.1-release/static-sdk/swift-6.1-RELEASE/swift-6.1-RELEASE_static-linux-0.0.1.artifactbundle.tar.gz \
-    --checksum 111c6f7d280a651208b8c74c0521dd99365d785c1976a6e23162f55f65379ac6
+    https://download.swift.org/swift-6.3.3-release/static-sdk/swift-6.3.3-RELEASE/swift-6.3.3-RELEASE_static-linux-0.1.0.artifactbundle.tar.gz \
+    --checksum 87c3eaf908e67c0e13a84367119e12273cec1d2cd3d81f7d74bb36722d6b607b
 
 # Set up a build area
 WORKDIR /build
