@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"io/fs"
 	"log/slog"
+	"mime"
 	"net/http"
 	"path"
 	"strings"
@@ -25,7 +26,6 @@ var templateFS embed.FS
 var staticFS embed.FS
 
 var (
-	templates  = template.Must(template.ParseFS(templateFS, "templates/*.html"))
 	staticRoot = mustSub(staticFS, "static")
 	fileServer = http.FileServerFS(staticRoot)
 
@@ -33,7 +33,24 @@ var (
 	// Last-Modified. Content-hash ETags let browsers revalidate instead.
 	// The map also serves as the list of files that exist.
 	etags = hashFiles(staticRoot)
+
+	// hasFile lets templates offer files that only some builds contain, like
+	// the JPEG XL images the Docker build generates. A <source> pointing at a
+	// missing file shows a broken image rather than falling back.
+	templates = template.Must(template.New("").Funcs(template.FuncMap{
+		"hasFile": hasFile,
+	}).ParseFS(templateFS, "templates/*.html"))
 )
+
+func init() {
+	// Go's built-in MIME table doesn't include JPEG XL.
+	mime.AddExtensionType(".jxl", "image/jxl")
+}
+
+func hasFile(name string) bool {
+	_, ok := etags[name]
+	return ok
+}
 
 // Register adds the page routes to mux, plus a catch-all that serves static
 // files and renders the 404 page for everything else.
@@ -45,12 +62,6 @@ func Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /index.html", home)
 	mux.HandleFunc("GET /resume", func(w http.ResponseWriter, r *http.Request) {
 		render(w, http.StatusOK, "resume.html", yearData())
-	})
-	mux.HandleFunc("GET /paste", func(w http.ResponseWriter, r *http.Request) {
-		render(w, http.StatusOK, "paste.html", nil)
-	})
-	mux.HandleFunc("GET /paste/{id}", func(w http.ResponseWriter, r *http.Request) {
-		render(w, http.StatusOK, "paste-view.html", struct{ PasteID string }{r.PathValue("id")})
 	})
 	mux.HandleFunc("GET /", serveStatic)
 }

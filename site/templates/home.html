@@ -12,10 +12,13 @@
             <a href="/resume">Resume</a>
         </nav>
         <header>
-            <img
-                src="/images/me.jpg"
-                alt="Stephen Parkinson"
-            />
+            <picture>
+                {{if hasFile "images/me.jxl"}}<source srcset="/images/me.jxl" type="image/jxl" />{{end}}
+                <img
+                    src="/images/me.jpg"
+                    alt="Stephen Parkinson"
+                />
+            </picture>
             <h1>Stephen Parkinson</h1>
             <p>Systems Development Engineer</p>
         </header>
@@ -24,10 +27,13 @@
             <p>I'm doing a lot of stuff with computers right now.</p>
         </section>
         <section id="image">
-            <img
-                src="images/trees.jpg"
-                alt="Project Image"
-            />
+            <picture>
+                {{if hasFile "images/trees.jxl"}}<source srcset="images/trees.jxl" type="image/jxl" />{{end}}
+                <img
+                    src="images/trees.jpg"
+                    alt="Project Image"
+                />
+            </picture>
         </section>
         <section id="contact">
             <h2>Contact</h2>

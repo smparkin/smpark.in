@@ -10,8 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"golang.org/x/time/rate"
-	"smpark.in/paste"
 	"smpark.in/site"
 )
 
@@ -22,12 +20,9 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	store := paste.NewStore()
-	go paste.StartExpiryWorker(ctx, store, 30*time.Second)
-
 	srv := &http.Server{
 		Addr:              *addr,
-		Handler:           newMux(store),
+		Handler:           logRequests(newMux()),
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
@@ -50,15 +45,45 @@ func main() {
 	}
 }
 
-func newMux(store *paste.Store) *http.ServeMux {
+func newMux() *http.ServeMux {
 	mux := http.NewServeMux()
-
-	rl := paste.NewRateLimiter(rate.Every(30*time.Second), 1)
-	h := paste.NewHandlers(store)
-	mux.HandleFunc("POST /api/paste", rl.Middleware(h.Create))
-	mux.HandleFunc("GET /api/paste/{id}", h.Get)
-	mux.HandleFunc("GET /api/paste/{id}/raw", h.GetRaw)
-
 	site.Register(mux)
 	return mux
+}
+
+// logRequests logs one line per request. Traffic arrives through cloudflared,
+// so the connection address is always the tunnel's; Cloudflare puts the
+// visitor's address in CF-Connecting-IP.
+func logRequests(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		rec := &statusRecorder{ResponseWriter: w, status: http.StatusOK}
+		next.ServeHTTP(rec, r)
+
+		client := r.Header.Get("CF-Connecting-IP")
+		if client == "" {
+			client = r.RemoteAddr
+		}
+		slog.Info("request",
+			"method", r.Method,
+			"path", r.URL.Path,
+			"status", rec.status,
+			"duration", time.Since(start),
+			"client", client,
+		)
+	})
+}
+
+type statusRecorder struct {
+	http.ResponseWriter
+	status int
+}
+
+func (r *statusRecorder) WriteHeader(status int) {
+	r.status = status
+	r.ResponseWriter.WriteHeader(status)
+}
+
+func (r *statusRecorder) Unwrap() http.ResponseWriter {
+	return r.ResponseWriter
 }

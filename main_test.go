@@ -1,15 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
-
-	"smpark.in/paste"
 )
 
 func fetch(t *testing.T, srv *httptest.Server, method, path string, header http.Header) (*http.Response, string) {
@@ -28,7 +28,7 @@ func fetch(t *testing.T, srv *httptest.Server, method, path string, header http.
 }
 
 func TestRoutes(t *testing.T) {
-	srv := httptest.NewServer(newMux(paste.NewStore()))
+	srv := httptest.NewServer(newMux())
 	defer srv.Close()
 	year := strconv.Itoa(time.Now().Year())
 
@@ -41,9 +41,6 @@ func TestRoutes(t *testing.T) {
 		{"GET", "/", 200, "text/html; charset=utf-8", "&copy; " + year + " Stephen Parkinson"},
 		{"GET", "/index.html", 200, "text/html; charset=utf-8", "<h1>Stephen Parkinson</h1>"},
 		{"GET", "/resume", 200, "text/html; charset=utf-8", "&copy; " + year + " Stephen Parkinson"},
-		{"GET", "/paste", 200, "text/html; charset=utf-8", "<h1>New Paste</h1>"},
-		{"GET", "/paste/abc123", 200, "text/html; charset=utf-8", "const pasteID = 'abc123';"},
-		{"GET", "/paste/x';alert(1)%3C%2Fscript%3E", 200, "text/html; charset=utf-8", `const pasteID = 'x\u0027;alert(1)\u003c\/script\u003e';`},
 		{"GET", "/css/style.css", 200, "text/css; charset=utf-8", "#9370db"},
 		{"GET", "/images/me.jpg", 200, "image/jpeg", ""},
 		{"GET", "/.well-known/appspecific/com.tesla.3p.public-key.pem", 200, "", "BEGIN PUBLIC KEY"},
@@ -51,8 +48,8 @@ func TestRoutes(t *testing.T) {
 		{"GET", "/nope", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
 		{"GET", "/css/", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
 		{"GET", "/.DS_Store", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
-		{"GET", "/api/paste/nope", 404, "application/json", `"paste not found"`},
-		{"GET", "/api/paste", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
+		{"GET", "/paste", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
+		{"GET", "/api/paste/AbCd1234", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
 		{"POST", "/resume", 405, "", ""},
 	}
 	for _, tt := range tests {
@@ -72,7 +69,7 @@ func TestRoutes(t *testing.T) {
 }
 
 func TestStaticETag(t *testing.T) {
-	srv := httptest.NewServer(newMux(paste.NewStore()))
+	srv := httptest.NewServer(newMux())
 	defer srv.Close()
 
 	resp, _ := fetch(t, srv, "GET", "/css/style.css", nil)
@@ -83,5 +80,37 @@ func TestStaticETag(t *testing.T) {
 	resp, _ = fetch(t, srv, "GET", "/css/style.css", http.Header{"If-None-Match": {etag}})
 	if resp.StatusCode != http.StatusNotModified {
 		t.Errorf("revalidation: got %d, want 304", resp.StatusCode)
+	}
+}
+
+func TestLogRequests(t *testing.T) {
+	var buf bytes.Buffer
+	prev := slog.Default()
+	slog.SetDefault(slog.New(slog.NewTextHandler(&buf, nil)))
+	defer slog.SetDefault(prev)
+
+	h := logRequests(newMux())
+
+	viaTunnel := httptest.NewRequest("GET", "/nope", nil)
+	viaTunnel.Header.Set("CF-Connecting-IP", "198.51.100.7")
+	h.ServeHTTP(httptest.NewRecorder(), viaTunnel)
+
+	direct := httptest.NewRequest("GET", "/resume", nil)
+	direct.RemoteAddr = "192.168.1.50:51234"
+	h.ServeHTTP(httptest.NewRecorder(), direct)
+
+	lines := strings.Split(strings.TrimSpace(buf.String()), "\n")
+	if len(lines) != 2 {
+		t.Fatalf("got %d log lines, want 2:\n%s", len(lines), buf.String())
+	}
+	for i, want := range [][]string{
+		{"msg=request", "method=GET", "path=/nope", "status=404", "client=198.51.100.7", "duration="},
+		{"msg=request", "method=GET", "path=/resume", "status=200", "client=192.168.1.50:51234"},
+	} {
+		for _, field := range want {
+			if !strings.Contains(lines[i], field) {
+				t.Errorf("line %d missing %q: %s", i, field, lines[i])
+			}
+		}
 	}
 }
