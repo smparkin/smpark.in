@@ -1,0 +1,5 @@
+.git
+.gitea
+.vscode
+**/.DS_Store
+/server

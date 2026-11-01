@@ -1,13 +1,17 @@
-.PHONY: build run release docker-build docker-up container-build container-run clean lint
+.PHONY: build run test lint docker-build docker-up container-build container-run clean upgrade
 
 build:
-	swift build
+	go build -o server .
 
 run:
-	swift run
+	go run .
 
-release:
-	swift build -c release
+test:
+	go test -race ./...
+
+lint:
+	go vet ./...
+	@test -z "$$(gofmt -l .)" || { gofmt -l .; exit 1; }
 
 docker-build:
 	docker buildx build --platform linux/amd64 -t smparkin/website:local --load .
@@ -15,15 +19,14 @@ docker-build:
 docker-up:
 	docker compose up
 
-# Apple's container CLI; the builder VM needs more than its 2 CPU / 2 GB default for a release build
 container-build:
-	container build --platform linux/amd64 --cpus 8 --memory 8G -t smparkin/website:local .
+	container build --platform linux/amd64 -t smparkin/website:local .
 
 container-run:
 	container run --rm -p 8080:8080 smparkin/website:local
 
 clean:
-	swift package clean
+	rm -f server
 
-lint:
-	swiftlint lint --strict
+upgrade:
+	go get -u ./... && go mod tidy

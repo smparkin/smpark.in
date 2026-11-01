@@ -5,13 +5,12 @@ on:
     branches:
       - master
     paths:
-      - "Sources/**"
-      - "Tests/**"
-      - "Resources/**"
-      - "Public/**"
-      - "Package.swift"
-      - "Package.resolved"
+      - "**.go"
+      - "go.mod"
+      - "go.sum"
+      - "site/**"
       - "Dockerfile"
+      - ".dockerignore"
       - ".gitea/workflows/build-and-deploy.yml"
   workflow_dispatch:
 

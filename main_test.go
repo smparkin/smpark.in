@@ -1,0 +1,87 @@
+package main
+
+import (
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"smpark.in/paste"
+)
+
+func fetch(t *testing.T, srv *httptest.Server, method, path string, header http.Header) (*http.Response, string) {
+	t.Helper()
+	req, _ := http.NewRequest(method, srv.URL+path, nil)
+	for k, v := range header {
+		req.Header[k] = v
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	return resp, string(body)
+}
+
+func TestRoutes(t *testing.T) {
+	srv := httptest.NewServer(newMux(paste.NewStore()))
+	defer srv.Close()
+	year := strconv.Itoa(time.Now().Year())
+
+	tests := []struct {
+		method, path string
+		status       int
+		contentType  string
+		contains     string
+	}{
+		{"GET", "/", 200, "text/html; charset=utf-8", "&copy; " + year + " Stephen Parkinson"},
+		{"GET", "/index.html", 200, "text/html; charset=utf-8", "<h1>Stephen Parkinson</h1>"},
+		{"GET", "/resume", 200, "text/html; charset=utf-8", "&copy; " + year + " Stephen Parkinson"},
+		{"GET", "/paste", 200, "text/html; charset=utf-8", "<h1>New Paste</h1>"},
+		{"GET", "/paste/abc123", 200, "text/html; charset=utf-8", "const pasteID = 'abc123';"},
+		{"GET", "/paste/x';alert(1)%3C%2Fscript%3E", 200, "text/html; charset=utf-8", `const pasteID = 'x\u0027;alert(1)\u003c\/script\u003e';`},
+		{"GET", "/css/style.css", 200, "text/css; charset=utf-8", "#9370db"},
+		{"GET", "/images/me.jpg", 200, "image/jpeg", ""},
+		{"GET", "/.well-known/appspecific/com.tesla.3p.public-key.pem", 200, "", "BEGIN PUBLIC KEY"},
+		{"HEAD", "/", 200, "text/html; charset=utf-8", ""},
+		{"GET", "/nope", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
+		{"GET", "/css/", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
+		{"GET", "/.DS_Store", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
+		{"GET", "/api/paste/nope", 404, "application/json", `"paste not found"`},
+		{"GET", "/api/paste", 404, "text/html; charset=utf-8", "404 — Page Not Found"},
+		{"POST", "/resume", 405, "", ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.method+" "+tt.path, func(t *testing.T) {
+			resp, body := fetch(t, srv, tt.method, tt.path, nil)
+			if resp.StatusCode != tt.status {
+				t.Errorf("status = %d, want %d", resp.StatusCode, tt.status)
+			}
+			if tt.contentType != "" && resp.Header.Get("Content-Type") != tt.contentType {
+				t.Errorf("Content-Type = %q, want %q", resp.Header.Get("Content-Type"), tt.contentType)
+			}
+			if !strings.Contains(body, tt.contains) {
+				t.Errorf("body does not contain %q:\n%.300s", tt.contains, body)
+			}
+		})
+	}
+}
+
+func TestStaticETag(t *testing.T) {
+	srv := httptest.NewServer(newMux(paste.NewStore()))
+	defer srv.Close()
+
+	resp, _ := fetch(t, srv, "GET", "/css/style.css", nil)
+	etag := resp.Header.Get("ETag")
+	if etag == "" {
+		t.Fatal("no ETag on static file")
+	}
+	resp, _ = fetch(t, srv, "GET", "/css/style.css", http.Header{"If-None-Match": {etag}})
+	if resp.StatusCode != http.StatusNotModified {
+		t.Errorf("revalidation: got %d, want 304", resp.StatusCode)
+	}
+}
