@@ -10,7 +10,7 @@ on:
       - "site/**"
       - "Dockerfile"
       - ".dockerignore"
-      - ".gitea/workflows/build-and-deploy.yml"
+      - ".forgejo/workflows/build-and-deploy.yml"
   workflow_dispatch:
 
 jobs:

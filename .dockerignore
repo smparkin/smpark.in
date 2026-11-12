@@ -1,5 +1,5 @@
 .git
-.gitea
+.forgejo
 .vscode
 **/.DS_Store
 /server
