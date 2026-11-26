@@ -40,6 +40,14 @@ jobs:
           cache-from: type=registry,ref=git.smpark.in/smparkin/website:buildcache
           cache-to: type=registry,ref=git.smpark.in/smparkin/website:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
 
-      - name: Summary
-        run: |
-          echo "Built and pushed website:latest"
+      # The compose file lives in the homelab repo (nuc/website/); this rolls the
+      # container onto the new image, as Barkinson's deploy does (Watchtower used to).
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ~/homelab
+            docker compose -f nuc/website/docker-compose.yml up -d --pull always
